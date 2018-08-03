@@ -62,7 +62,7 @@ class Game:
             ball.render()
 
             pygame.display.update()
-            if(i%300 == 0):
+            if(i%150 == 0):
                 pygame.image.save(screen, "images/image"+str(i)+".jpeg")
 
             i += 1
