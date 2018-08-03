@@ -1,11 +1,11 @@
 # atari-breakout-ML
 Use reinforcement learning to train computer to play Atari Breakout.
 
-# DQN with Experience Replay algorithm from DeepMind
+## DQN with Experience Replay algorithm from DeepMind
 Initialize replay memory D to capacity N </br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initialize action-value function Q with random weights </br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for episode = 1, M do </br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initialise sequence s1 = {x1} and preprocessed sequenced φ1 = φ(s1) </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initialise sequence s<sub>1</sub> = {x1} and preprocessed sequenced φ1 = φ(s1) </br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for t = 1, T do </br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;With probability &#949; select a random action at </br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;otherwise select at = maxa Q∗(φ(st), a; θ) </br>
