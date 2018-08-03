@@ -14,7 +14,7 @@ Initialize replay memory D to capacity N </br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Store transition (φ<sub>t</sub>, a<sub>t</sub>, r<sub>t</sub>, φ<sub>t+1</sub>) in D </br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sample random minibatch of transitions (φ<sub>j</sub> , a<sub>j</sub> , r<sub>j</sub> , φ<sub>j+1</sub>) from D </br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set y<sub>j</sub> = r<sub>j</sub> for terminal φ<sub>j+1</sub> </br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set y<sub>j</sub> = r<sub>j</sub> + γ * max<sub>a</sub> Q(φ<sub>j+1</sub>, a<sub>0</sub>; θ) for non-terminal φ<sub>j+1</sub> </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set y<sub>j</sub> = r<sub>j</sub> + γ * max<sub>a</sub> Q(φ<sub>j+1</sub>, a<sup>'</sup>; θ) for non-terminal φ<sub>j+1</sub> </br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Perform a gradient descent step on (y<sub>j</sub> − Q(φ<sub>j</sub> , a<sub>j</sub> ; θ))<sup>2</sup> according to equation 3 </br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end for </br>
 end for </br>
