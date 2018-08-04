@@ -24,5 +24,5 @@ WINDOW_WIDTH = 250
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption('Game Window')
 
-game1 = Game((3, 4), 0.025, 50, 0)
+game1 = Game((4, 4), 1.75, 2.5, 50, 0)
 game1.run(screen)

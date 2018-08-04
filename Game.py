@@ -4,18 +4,19 @@ from pygame.locals import *
 from Components import Paddle, Ball, Wall
 
 class Game:
-    def __init__(self, wallDimensions, ballSpeed, paddleSize, initialScore):
+    def __init__(self, wallDimensions, ballSpeed, paddleSpeed, paddleSize, initialScore):
         self.score = initialScore
         self.over = False
         self.wallDimensions = wallDimensions
         self.ballSpeed = ballSpeed
+        self.paddleSpeed = paddleSpeed
         self.paddleSize = paddleSize
         self.font = pygame.font.SysFont('Comic Sans MS', 29)
 
     def run(self, screen):
         ball = Ball((screen.get_size()[0]-50, screen.get_size()[1]-50), screen, self.ballSpeed)
-        paddle = Paddle(screen, self.paddleSize)
-        wall = Wall(screen, self.wallDimensions, 10, 10)
+        paddle = Paddle(screen, self.paddleSize, self.paddleSpeed)
+        wall = Wall(screen, self.wallDimensions, 10, 5)
 
         leftPressed = False
         rightPressed = False
@@ -24,7 +25,11 @@ class Game:
 
         i = 0
 
+        clock = pygame.time.Clock()
+
         while(not self.over):
+
+            clock.tick(60)
 
             for event in pygame.event.get():
                 if(event.type == pygame.QUIT):
@@ -62,7 +67,8 @@ class Game:
             ball.render()
 
             pygame.display.update()
-            if(i%150 == 0):
+            if(i%4 == 0):
                 pygame.image.save(screen, "images/image"+str(i)+".jpeg")
+                print(clock.get_fps())
 
             i += 1

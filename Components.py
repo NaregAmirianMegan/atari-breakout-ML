@@ -117,8 +117,8 @@ class Ball:
         draw.circle(self.screen, (0, 0, 0), (int(self.xPos), int(self.yPos)), self.rad, 0)
 
 class Paddle():
-    def __init__(self, screen, paddleWidth):
-        self.dX = 0.07
+    def __init__(self, screen, paddleWidth, paddleSpeed):
+        self.dX = paddleSpeed
         self.height = 20
         self.width = paddleWidth
         self.screen = screen
