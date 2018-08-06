@@ -26,6 +26,7 @@ class Ball:
     def detectCollision(self, brick):
         if(self.dX < 0):
             if(self.dY < 0):
+
                 truth1 = False
                 truth2 = False
                 if(self.xPos - self.rad < brick.xPos + brick.width):
@@ -46,6 +47,7 @@ class Ball:
                     return True
 
             else:
+
                 truth1 = False
                 truth2 = False
                 if(self.xPos - self.rad < brick.xPos + brick.width):
@@ -65,6 +67,7 @@ class Ball:
                     return True
 
         else:
+
             if(self.dY < 0):
                 truth1 = False
                 truth2 = False
@@ -85,6 +88,7 @@ class Ball:
                     return True
 
             else:
+
                 truth1 = False
                 truth2 = False
                 if(self.xPos < brick.xPos and self.xPos + self.rad > brick.xPos):
@@ -119,6 +123,10 @@ class Ball:
     def checkStatus(self, paddle, wall):
         hit = self.checkHit(wall)
         if(not hit):
+            if(self.dY > 0):
+                if(self.xPos > paddle.xPos and self.xPos < paddle.xPos + paddle.width):
+                    if(self.yPos + self.rad > paddle.yPos):
+                        self.dY *= -1
             if((self.xPos - self.rad) <= 0):
                 self.dX *= -1
             if((self.yPos - self.rad) <= 0):
@@ -126,11 +134,7 @@ class Ball:
             if((self.xPos + self.rad) >= self.screen.get_size()[0]):
                 self.dX *= -1
             if((self.yPos + self.rad) >= self.screen.get_size()[1]):
-                if(not(self.xPos > paddle.xPos and self.xPos < paddle.xPos + paddle.width)):
-                    self.dY *= -1
-                    return False
-                else:
-                    self.dY *= -1
+                return True
         else:
             return 10
 
@@ -149,7 +153,7 @@ class Ball:
 class Paddle():
     def __init__(self, screen, paddleWidth, paddleSpeed):
         self.dX = paddleSpeed
-        self.height = 9
+        self.height = 11
         self.width = paddleWidth
         self.screen = screen
         self.xPos = int(screen.get_size()[0]/2) - self.width/2
