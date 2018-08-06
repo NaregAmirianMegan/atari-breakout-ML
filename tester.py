@@ -7,11 +7,13 @@ def preprocess(img):
     img = np.mean(img, axis=2).astype(np.uint8)
 
     #resize
-    img = img[::3, ::3]
+    img = img[::2, ::2]
+
+    return img
 
 def saveImgToView(img):
     im = Image.fromarray(np.uint8(img))
     im.save('images/out.jpeg')
 
 
-preprocess('images/image0.jpeg')
+saveImgToView(preprocess('images/image0.jpeg'))

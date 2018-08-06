@@ -6,7 +6,7 @@ class Ball:
         self.yPos = spawnCoordinates[1]
         self.dX = -speed
         self.dY = -speed
-        self.rad = 8
+        self.rad = 6
         self.screen = screen
 
     def spreadExposure(self, wall, row, col):
@@ -26,53 +26,82 @@ class Ball:
     def detectCollision(self, brick):
         if(self.dX < 0):
             if(self.dY < 0):
-
+                truth1 = False
+                truth2 = False
                 if(self.xPos - self.rad < brick.xPos + brick.width):
                     if(self.xPos > brick.xPos + brick.width):
+                        truth1 = True
                         if(self.yPos < brick.yPos + brick.height and self.yPos > brick.yPos):
                             self.dX *= -1
                             return True
                 if(self.yPos - self.rad < brick.yPos + brick.height):
                     if(self.yPos > brick.yPos + brick.height):
+                        truth2 = True
                         if(self.xPos < brick.xPos + brick.width and self.xPos > brick.xPos):
                             self.dY *= -1
                             return True
+                if(truth1 and truth2):
+                    self.dX *= -1
+                    self.dY *= -1
+                    return True
 
             else:
-
+                truth1 = False
+                truth2 = False
                 if(self.xPos - self.rad < brick.xPos + brick.width):
                     if(self.xPos > brick.xPos + brick.width):
+                        truth1 = True
                         if(self.yPos < brick.yPos + brick.height and self.yPos > brick.yPos):
                             self.dX *= -1
                             return True
                 if(self.yPos + self.rad > brick.yPos and self.yPos < brick.yPos):
+                    truth2 = True
                     if(self.xPos < brick.xPos + brick.width and self.xPos > brick.xPos):
                         self.dY *= -1
                         return True
+                if(truth1 and truth2):
+                    self.dX *= -1
+                    self.dY *= -1
+                    return True
 
         else:
             if(self.dY < 0):
-
+                truth1 = False
+                truth2 = False
                 if(self.xPos < brick.xPos and self.xPos + self.rad > brick.xPos):
+                    truth1 = True
                     if(self.yPos < brick.yPos + brick.height and self.yPos > brick.yPos):
                         self.dX *= -1
                         return True
                 if(self.yPos - self.rad < brick.yPos + brick.height):
                     if(self.yPos > brick.yPos + brick.height):
+                        truth2 = True
                         if(self.xPos < brick.xPos + brick.width and self.xPos > brick.xPos):
                             self.dY *= -1
                             return True
+                if(truth1 and truth2):
+                    self.dX *= -1
+                    self.dY *= -1
+                    return True
 
             else:
-
+                truth1 = False
+                truth2 = False
                 if(self.xPos < brick.xPos and self.xPos + self.rad > brick.xPos):
+                    truth1 = True
                     if(self.yPos < brick.yPos + brick.height and self.yPos > brick.yPos):
                         self.dX *= -1
                         return True
                 if(self.yPos + self.rad > brick.yPos and self.yPos < brick.yPos):
+                    truth2 = True
                     if(self.xPos < brick.xPos + brick.width and self.xPos > brick.xPos):
                         self.dY *= -1
                         return True
+                if(truth1 and truth2):
+                    self.dX *= -1
+                    self.dY *= -1
+                    return True
+
         return False
 
 
@@ -98,7 +127,8 @@ class Ball:
                 self.dX *= -1
             if((self.yPos + self.rad) >= self.screen.get_size()[1]):
                 if(not(self.xPos > paddle.xPos and self.xPos < paddle.xPos + paddle.width)):
-                    return True
+                    self.dY *= -1
+                    return False
                 else:
                     self.dY *= -1
         else:
@@ -119,7 +149,7 @@ class Ball:
 class Paddle():
     def __init__(self, screen, paddleWidth, paddleSpeed):
         self.dX = paddleSpeed
-        self.height = 20
+        self.height = 9
         self.width = paddleWidth
         self.screen = screen
         self.xPos = int(screen.get_size()[0]/2) - self.width/2

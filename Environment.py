@@ -2,6 +2,7 @@ import pygame, os
 from pygame.locals import *
 import numpy as np
 from PIL import Image
+import random
 
 from Components import Paddle, Ball, Wall
 
@@ -14,7 +15,8 @@ class Environment:
         self.paddleSize = paddleSize
         self.screen = screen
 
-        self.ball = Ball((screen.get_size()[0]-50, screen.get_size()[1]-50), screen, self.ballSpeed)
+        randomSpawnLoc = self.genRandomSpawnLoc()
+        self.ball = Ball(randomSpawnLoc, screen, self.ballSpeed)
         self.paddle = Paddle(screen, self.paddleSize, paddleSpeed)
         self.wall = Wall(screen, self.wallDimensions, 10, 10)
 
@@ -23,12 +25,22 @@ class Environment:
         self.currFrame = 0
         self.kVal = 4
 
+    def genRandomSpawnLoc(self):
+        x = random.randint(10, self.screen.get_size()[0]-10)
+        y = random.randint(self.screen.get_size()[1]/2 + 10, self.screen.get_size()[1])
+
+        return (x, y)
+
     #return numpy array of uint8 numbers representing a downscaled, grayscaled, cropped game image
     def preprocess(img):
-        img = Image.open(img, 'r')
-        img = img.convert('L')
-        img.save('images/out.jpeg')
+        #greyscale
+        img = np.asarray(Image.open(img))
+        img = np.mean(img, axis=2).astype(np.uint8)
 
+        #resize
+        img = img[::2, ::2]
+
+        return img
 
     def render(self):
         self.screen.fill((255, 255, 255))

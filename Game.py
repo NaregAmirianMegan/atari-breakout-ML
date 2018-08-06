@@ -14,7 +14,7 @@ class Game:
         self.font = pygame.font.SysFont('Comic Sans MS', 29)
 
     def run(self, screen):
-        ball = Ball((screen.get_size()[0]-50, screen.get_size()[1]-50), screen, self.ballSpeed)
+        ball = Ball((50, 100), screen, self.ballSpeed)
         paddle = Paddle(screen, self.paddleSize, self.paddleSpeed)
         wall = Wall(screen, self.wallDimensions, 10, 5)
 
@@ -62,13 +62,13 @@ class Game:
                 self.over = True
             elif(gameOver == 10):
                 self.score += 10
-                print(self.score)
+                #print(self.score)
 
             ball.render()
 
             pygame.display.update()
-            if(i%4 == 0):
-                pygame.image.save(screen, "images/image"+str(i)+".jpeg")
-                print(clock.get_fps())
+            #if(i%4 == 0):
+                #pygame.image.save(screen, "images/image"+str(i)+".jpeg")
+                #print(clock.get_fps())
 
             i += 1
