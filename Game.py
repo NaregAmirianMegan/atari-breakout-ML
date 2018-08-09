@@ -67,8 +67,8 @@ class Game:
             ball.render()
 
             pygame.display.update()
-            #if(i%4 == 0):
-                #pygame.image.save(screen, "images/image"+str(i)+".jpeg")
+            if(i%4 == 0):
+                pygame.image.save(screen, "images/image"+str(i)+".jpeg")
                 #print(clock.get_fps())
 
             i += 1

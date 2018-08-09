@@ -73,3 +73,4 @@ class Environment:
         pygame.image.save(screen, imgString)
         stateFrame = self.preprocess(imgString)
         self.frameRecord.append(stateFrame)
+        os.remove(imgString)
