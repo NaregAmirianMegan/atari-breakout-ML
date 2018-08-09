@@ -18,3 +18,8 @@ Initialize replay memory D to capacity N </br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Perform a gradient descent step on (y<sub>j</sub> − Q(φ<sub>j</sub> , a<sub>j</sub> ; θ))<sup>2</sup> according to equation 3 </br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end for </br>
 end for </br>
+
+## Experience Replay Efficiency Test
+Random sampling is extremely slow in python's collections.deque class so I implemented a circular buffer that is much faster.
+
+![data_test](https://user-images.githubusercontent.com/22607081/43928698-70defcfe-9bf7-11e8-87c4-1c723f3e41de.JPG)
