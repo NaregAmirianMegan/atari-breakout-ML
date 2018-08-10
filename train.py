@@ -1,3 +1,31 @@
+import random, os
+import numpy as np
+from PIL import Image
+
+from keras.layers import Conv2D, Dense, Flatten
+from keras.optimizers import RMSprop
+
+class CircularBuffer:
+    def __init__(self, size):
+        self.data = [None] * size
+        self.size = size
+        self.currIndex = 0
+        self.full = False
+
+    def append(self, element):
+        if(self.currIndex == self.size):
+            self.full = True
+            self.currIndex = 0
+        self.data[self.currIndex] = element
+        self.currIndex += 1
+
+    def random_sample(self, batch_size):
+        sample = [None] * batch_size
+        for x in range(batch_size):
+            if(self.full):
+                sample[x] = self.data[random.randint(0, self.size-1)]
+            else:
+                sample[x] = self.data[random.randint(0, self.currIndex)]
 
 
 class DeepQNetwork():
@@ -8,9 +36,9 @@ class DeepQNetwork():
 
         self.GAMMA = 0.85
 
-        self.LR = 0.01
+        self.LR = 0.00025
 
-        self.experience_replay = deque(maxlen=3000)
+        self.experience_replay = CircularBuffer(1000000)
 
         self.model = self.createModel()
         self.target_model = self.createModel()
@@ -18,17 +46,20 @@ class DeepQNetwork():
     def createModel(self):
         model = Sequential()
 
-        model.add(Dense(30, input_shape=(10,), activation='tanh'))
-        model.add(Dense(15, activation='tanh'))
-        model.add(Dense(9))
+        model.add(Conv2D(16, kernel_size=(8, 8), strides=(4, 4), activation='relu',
+                            input_shape=(75, 125, 4), data_format='channels_last'))
+        model.add(Conv2D(32, kernel_size=(4, 4), strides=(2, 2), activation='relu'))
+        model.add(Flatten())
+        model.add(Dense(256, activation='relu'))
+        model.add(Dense(3))
 
-        adam = Adam(lr=self.LR)
-        model.compile(loss='mean_squared_error', optimizer=adam)
+        optimizer = RMSprop(lr=self.LR, rho=0.95, epsilon=0.01)
+        model.compile(optimizer, loss='mse')
 
         return model
-        
-    def record(self, state, player, action, reward, new_state, terminal):
-        self.experience_replay.append([state, player, action, reward, new_state, terminal])
+
+    def record(self, state, action, reward, new_state, terminal):
+        self.experience_replay.append((state, action, reward, new_state, terminal))
 
     def train(self, batch_size):
         if(len(self.experience_replay) < batch_size):
@@ -39,24 +70,19 @@ class DeepQNetwork():
         for game_step in batch:
             state, player, action, reward, new_state, terminal = game_step
 
-            #format data for neural net
-            actionID = self.actionToID(action)
-            state_input = self.formatInput(state, player)
-            new_state_input = self.formatInput(new_state, player)
-
             #######PLAYER
             target_q_vals = self.target_model.predict(state_input)
 
             #if game is over
             if(terminal):
                 #target q val is simply the reward received for the action to get to the terminal state
-                target_q_vals[0][actionID] = reward
+                target_q_vals[0][action] = reward
             else:
                 #else add future discounted reward
                 Q_future = max(self.target_model.predict(new_state_input)[0])
-                target_q_vals[0][actionID] = reward + Q_future * self.GAMMA
+                target_q_vals[0][action] = reward + Q_future * self.GAMMA
 
-            self.model.fit(state_input, target_q_vals, epochs=1, verbose=0)
+            self.model.fit(state, target_q_vals, epochs=1, verbose=0)
 
     def updateTargetModel(self):
         weights = self.model.get_weights()
