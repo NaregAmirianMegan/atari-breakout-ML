@@ -5,6 +5,11 @@ from PIL import Image
 from keras.layers import Conv2D, Dense, Flatten
 from keras.optimizers import RMSprop
 
+import pygame, os
+from pygame.locals import *
+
+from Environment import Environment, State
+
 class CircularBuffer:
     def __init__(self, size):
         self.data = [None] * size
@@ -28,7 +33,7 @@ class CircularBuffer:
                 sample[x] = self.data[random.randint(0, self.currIndex)]
 
 
-class DeepQNetwork():
+class DeepQAgent():
     def __init__(self):
         self.EPSILON = 1.0
         self.EPSILON_DECAY = 0.99995
@@ -38,7 +43,7 @@ class DeepQNetwork():
 
         self.LR = 0.00025
 
-        self.experience_replay = CircularBuffer(1000000)
+        self.experience_replay = CircularBuffer(250000)
 
         self.model = self.createModel()
         self.target_model = self.createModel()
@@ -62,16 +67,16 @@ class DeepQNetwork():
         self.experience_replay.append((state, action, reward, new_state, terminal))
 
     def train(self, batch_size):
-        if(len(self.experience_replay) < batch_size):
+        if(self.experience_replay.currIndex <= batch_size and self.experience_replay.full == False):
             return
 
-        batch = random.sample(self.experience_replay, batch_size)
+        batch = self.experience_replay.random_sample(batch_size)
 
         for game_step in batch:
-            state, player, action, reward, new_state, terminal = game_step
+            state, action, reward, new_state, terminal = game_step
 
             #######PLAYER
-            target_q_vals = self.target_model.predict(state_input)
+            target_q_vals = self.target_model.predict(state)
 
             #if game is over
             if(terminal):
@@ -91,105 +96,60 @@ class DeepQNetwork():
             target_weights[i] = weights[i]
         self.target_model.set_weights(target_weights)
 
-    def act(self, state, player):
+    def act(self, state):
         #set epsilon coefficient
         self.EPSILON *= self.EPSILON_DECAY
         self.EPSILON = max(self.EPSILON_BASELINE, self.EPSILON)
 
         if np.random.random() < self.EPSILON:
-            #print("RANDOM")
-            #select random action
-            return np.random.random_integers(0, 8)
+            return np.random.random_integers(0, 2)
         else:
-            #print("MODEL CHOSEN")
-            #select action based on the model
-            input = self.formatInput(state, player)
-            return np.argmax(self.model.predict(input)[0])
+            return np.argmax(self.model.predict(state)[0])
 
     def saveModel(self):
-        self.model.save('3TGod.h5')
+        self.model.save('Atari-Breakout-Master.h5')
 
-def getAction(ID):
-    if(ID < 3):
-        x = 0
-        y = ID
-    elif(ID < 6):
-        x = 1
-        y = ID - 3
-    else:
-        x = 2
-        y = ID - 6
+def workout(episodes, max_episode_length):
+    DeepQAgent = DeepQAgent()
 
-    return Action(x, y)
+    print("Loading environment...")
 
-def workout(episodes):
+    x = 500
+    y = 100
+    os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
+    pygame.init()
+    WINDOW_HEIGHT = 150
+    WINDOW_WIDTH = 250
 
-    max_episode_length = 100
+    screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+    pygame.display.set_caption('Environment Display')
 
-    DeepQAgent = DeepQNetwork()
-
-    switch_player = True
-
-    curr_state = State()
-    curr_player = 2
-
-    step_count_list = []
+    env = Environment((4, 4), 1.75, 50, 2.5, screen)
 
     for episode in range(episodes):
-        curr_state.reset()
+        env.reset()
 
-        print("Episode: ", episode)
+        curr_state, _, __, = env.step(1)
+
+        print("Episode:", episode, "/", episodes)
         print("Epsilon: ", DeepQAgent.EPSILON)
-        if(len(step_count_list) > 0):
-            step_avg = sum(step_count_list)/len(step_count_list)
-        else:
-            step_avg = 0
-        #print("Game length avg: ", step_avg)
-
-        step_count = 0
 
         for step in range(max_episode_length):
-            step_count += 1
 
-            action = getAction(DeepQAgent.act(curr_state, curr_player))
-            new_state = curr_state.update(curr_player, action)
+            action = DeepQAgent.act(curr_state)
+            new_state, reward, terminal = env.step(action)
 
-            #Illegal move
-            if(new_state == False):
-                switch_player = False
-                reward = -1
-                new_state = curr_state
-                terminal = False
-            #Legal move
-            else:
-                switch_player = True
-                reward, terminal = new_state.reward(curr_player)
+            DeepQAgent.record(state, action, reward, new_state, terminal)
 
-            # curr_qvals = DeepQAgent.model.predict(DeepQAgent.formatInput(curr_state, curr_player))
-            # q_max = max(curr_qvals[0])
-            # max_move = getAction(np.argmax(curr_qvals))
-
-            # print("Reward: ", reward, " For ", curr_player)
-            #print("MaxQval: ", q_max, " For (", max_move.x, ", ", max_move.y, ")")
-
-            #new_state.show()
-
-            DeepQAgent.record(curr_state, curr_player, action, reward, new_state, terminal)
-
-            DeepQAgent.train(20)
+            DeepQAgent.train(32)
             DeepQAgent.updateTargetModel()
 
             if(terminal):
-                step_count_list.append(step_count)
-                # if(reward == 1):
-                #     print("WINNER: ", curr_player)
-                # else:
-                #     print("TIE")
                 break
             else:
                 curr_state = new_state
-                if(switch_player):
-                    curr_player *= -1
+
+        print("Score:", env.cumScore)
 
     DeepQAgent.saveModel()
 
