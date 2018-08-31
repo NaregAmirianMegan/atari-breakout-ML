@@ -23,3 +23,7 @@ end for </br>
 Random sampling is extremely slow in python's collections.deque class so I implemented a circular buffer that is much faster.
 
 ![data_test](https://user-images.githubusercontent.com/22607081/43928698-70defcfe-9bf7-11e8-87c4-1c723f3e41de.JPG)
+
+## Demo
+
+![](atari-breakout-gif.gif)
