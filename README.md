@@ -2,7 +2,7 @@
 Use reinforcement learning to train computer to play Atari Breakout.
 
 ## DQN with Experience Replay algorithm from DeepMind
-This is a Deep-Q-Learning algorithm with experience replay and a double network (target and predictive Convolutional Neural Networks) </br>
+This is a Deep-Q-Learning algorithm with experience replay and a double network (target and predictive Convolutional Neural Networks) </br></br>
 Initialize replay memory D to capacity N </br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initialize action-value function Q with random weights </br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for episode = 1, M do </br>
